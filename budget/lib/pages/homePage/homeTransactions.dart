@@ -41,7 +41,7 @@ class HomeTransactions extends StatelessWidget {
       DateTime.now().justDay(dayOffset: numberOfFutureDays),
       dateDividerColor: Colors.transparent,
       useHorizontalPaddingConstrained: false,
-      pastDaysLimitToShow: 7,
+      pastDaysLimitToShow: 5,
       limitPerDay: 50,
       searchFilters: searchFilters,
       enableFutureTransactionsCollapse: false,

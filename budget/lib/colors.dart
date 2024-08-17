@@ -71,7 +71,7 @@ AppColors getAppColors(
                 ? Color(0x0F000000)
                 : Color(0xFFF0F0F0),
             "standardContainerColor": getPlatform() == PlatformOS.isIOS
-                ? themeData.colorScheme.background
+                ? themeData.colorScheme.surface
                 : appStateSettings["materialYou"]
                     ? lightenPastel(
                         themeData.colorScheme.secondaryContainer,
@@ -109,7 +109,7 @@ AppColors getAppColors(
                 ? Color(0x13FFFFFF)
                 : Color(0x6F363636),
             "standardContainerColor": getPlatform() == PlatformOS.isIOS
-                ? themeData.colorScheme.background
+                ? themeData.colorScheme.surface
                 : appStateSettings["materialYou"]
                     ? darkenPastel(
                         themeData.colorScheme.secondaryContainer,

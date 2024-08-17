@@ -656,7 +656,7 @@ class TransactionEntry extends StatelessWidget {
                         ),
                       ),
                       closedColor: containerColor == null
-                          ? Theme.of(context).colorScheme.background
+                          ? Theme.of(context).colorScheme.surface
                           : containerColor,
                       button: (openContainer) {
                         return FlashingContainer(

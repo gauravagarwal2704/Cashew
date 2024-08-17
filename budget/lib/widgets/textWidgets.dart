@@ -116,8 +116,7 @@ class TextFont extends StatelessWidget {
                         text: textPassed,
                         children: richTextSpan,
                       ),
-                      textScaler: TextScaler.linear(
-                          MediaQuery.of(context).textScaleFactor),
+                      textScaler: TextScaler.linear(MediaQuery.of(context).textScaleFactor),
                     )
                   : autoSizeText
                       ? AutoSizeText(

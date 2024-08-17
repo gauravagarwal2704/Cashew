@@ -798,10 +798,10 @@ class DebugPage extends StatelessWidget {
         ColorBox(
             color: Theme.of(context).colorScheme.onSurface, name: "onSurface"),
         ColorBox(
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.surface,
             name: "background"),
         ColorBox(
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
             name: "onBackground"),
         Container(
           margin: EdgeInsetsDirectional.all(10),
