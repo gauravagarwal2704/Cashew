@@ -204,7 +204,7 @@ class SettingsContainerOpenPage extends StatelessWidget {
       child: OpenContainerNavigation(
         onClosed: onClosed,
         onOpen: onOpen,
-        closedColor: Theme.of(context).colorScheme.background,
+        closedColor: Theme.of(context).colorScheme.surface,
         borderRadius: isOutlined == true
             ? 10
             : getIsFullScreen(context)

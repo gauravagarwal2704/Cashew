@@ -3716,7 +3716,7 @@ class SelectTransactionTypePopup extends StatelessWidget {
                     openPage: Container(),
                     containerColor: Theme.of(context)
                         .colorScheme
-                        .background
+                        .surface
                         .withOpacity(0.5),
                     transaction: Transaction(
                       transactionPk: "-1",
@@ -4744,7 +4744,7 @@ class SelectSubcategoryChips extends StatelessWidget {
                         allowMultipleSelected: false,
                         selectedColor: Theme.of(context)
                             .colorScheme
-                            .background
+                            .surface
                             .withOpacity(0.6),
                         onLongPress: (category) {
                           pushRoute(

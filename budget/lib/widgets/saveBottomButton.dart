@@ -59,8 +59,8 @@ class AddGradientOnTop extends StatelessWidget {
               foregroundDecoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Theme.of(context).colorScheme.background.withOpacity(0),
-                    Theme.of(context).colorScheme.background,
+                    Theme.of(context).colorScheme.surface.withOpacity(0),
+                    Theme.of(context).colorScheme.surface,
                   ],
                   begin: AlignmentDirectional.topCenter,
                   end: AlignmentDirectional.bottomCenter,
@@ -70,7 +70,7 @@ class AddGradientOnTop extends StatelessWidget {
             ),
           ),
           Container(
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.surface,
             child: child,
           ),
         ],
