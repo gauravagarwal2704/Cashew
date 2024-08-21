@@ -20,6 +20,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:budget/pages/addButton.dart';
+import 'package:budget/globalState.dart';
+import 'package:budget/widgets/textWidgets.dart';
+import 'package:budget/main.dart';
 
 final int numberOfColumns = 3; // Number of columns in the grid
 final double aspectRatio = 1;
@@ -33,13 +36,11 @@ class HomePageWalletSwitcher extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsetsDirectional.only(bottom: 13.0),
         child: StreamBuilder<List<WalletWithDetails>>(
-          stream: database.watchAllWalletsWithDetails(
-              homePageWidgetDisplay: HomePageWidgetDisplay.WalletSwitcher),
+          stream: database.watchAllWalletsWithDetails(homePageWidgetDisplay: HomePageWidgetDisplay.WalletSwitcher),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               int numberOfRows = ((snapshot.data!.length + 1) / numberOfColumns).ceil();
               double gridViewHeight = (numberOfRows * 50) + 20;
-              
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -51,14 +52,18 @@ class HomePageWalletSwitcher extends StatelessWidget {
                         childAspectRatio: 2.7, // Aspect ratio of each grid item
                         mainAxisSpacing: 5, // Spacing between the rows
                       ),
-                      itemCount: snapshot.data!.length + 1, // Number of items in the grid
+                      itemCount: snapshot.data!.length + 1,
                       itemBuilder: (context, index) {
                         if (index < snapshot.data!.length) {
                           WalletWithDetails walletDetails = snapshot.data![index];
+                          bool selected = globalState.selectedAccountIds.contains(walletDetails.wallet.walletPk);
+                          // if (!globalState.isSelectingAccounts) {
+                          //   selected = Provider.of<SelectedWalletPk>(context)
+                          //           .selectedWalletPk ==
+                          //       walletDetails.wallet.walletPk;
+                          // }
                           return WalletEntry(
-                            selected: Provider.of<SelectedWalletPk>(context)
-                                    .selectedWalletPk ==
-                                walletDetails.wallet.walletPk,
+                            selected: selected,
                             walletWithDetails: walletDetails,
                           );
                         } else {
@@ -86,16 +91,14 @@ class HomePageWalletSwitcher extends StatelessWidget {
                               ),
                               Positioned.fill(
                                 child: Padding(
-                                  padding: const EdgeInsetsDirectional.only(
-                                      start: 2, end: 2),
+                                  padding: const EdgeInsetsDirectional.only(start: 2, end: 2),
                                   child: AddButton(
                                     borderRadius: 8,
                                     onTap: () {
                                       openBottomSheet(
                                         context,
                                         EditHomePagePinnedWalletsPopup(
-                                          homePageWidgetDisplay:
-                                              HomePageWidgetDisplay.WalletSwitcher,
+                                          homePageWidgetDisplay: HomePageWidgetDisplay.WalletSwitcher,
                                         ),
                                         useCustomController: true,
                                       );
@@ -112,6 +115,36 @@ class HomePageWalletSwitcher extends StatelessWidget {
                       padding: EdgeInsetsDirectional.symmetric(horizontal: 7),
                     ),
                   ),
+                  if (globalState.selectedAccountIds.length > 0)
+                    Chip(
+                      label: TextFont(
+                        text: "Selected accounts (${globalState.selectedAccountIds.length})",
+                        fontSize: 14,
+                        textColor: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black.withOpacity(0.8)
+                            : Colors.white.withOpacity(0.7),
+                      ),
+                      deleteIcon: Icon(
+                        Icons.clear,
+                        size: 18,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black.withOpacity(0.8)
+                            : Colors.white.withOpacity(0.7),
+                      ),
+                      onDeleted: () {
+                        globalState.clearSelectedAccounts();
+                        Provider.of<SelectedWalletPk>(context, listen: false).selectedWalletPk = "";
+                        appStateKey.currentState?.refreshAppState();
+                      },
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    ),
                 ],
               );
             }
@@ -148,8 +181,7 @@ class EditHomePagePinnedWalletsPopup extends StatelessWidget {
     return StreamBuilder<List<TransactionWallet>>(
       stream: database.getAllPinnedWallets(homePageWidgetDisplay).$1,
       builder: (context, snapshot2) {
-        Map<String, TransactionWallet> walletsIndexedByPk =
-            Provider.of<AllWallets>(context).indexedByPk;
+        Map<String, TransactionWallet> walletsIndexedByPk = Provider.of<AllWallets>(context).indexedByPk;
         List<String> allWalletsPks = walletsIndexedByPk.keys.toList();
         List<TransactionWallet> allPinnedWallets = snapshot2.data ?? [];
         Widget child = Column(
@@ -167,38 +199,30 @@ class EditHomePagePinnedWalletsPopup extends StatelessWidget {
                 allSelected: allSelected,
                 highlightSelected: highlightSelected,
                 syncWithInitial: true,
-                checkboxCustomIconSelected:
-                    useCheckMarks ? null : Icons.push_pin_rounded,
-                checkboxCustomIconUnselected:
-                    useCheckMarks ? null : Icons.push_pin_outlined,
+                checkboxCustomIconSelected: useCheckMarks ? null : Icons.push_pin_rounded,
+                checkboxCustomIconUnselected: useCheckMarks ? null : Icons.push_pin_outlined,
                 items: allWalletsPks,
                 getColor: (walletPk, selected) {
                   TransactionWallet? wallet = walletsIndexedByPk[walletPk];
-                  return HexColor(wallet?.colour,
-                          defaultColor: Theme.of(context).colorScheme.primary)
+                  return HexColor(wallet?.colour, defaultColor: Theme.of(context).colorScheme.primary)
                       .withOpacity(selected == true ? 0.7 : 0.5);
                 },
                 displayFilter: (walletPk) {
                   TransactionWallet? wallet = walletsIndexedByPk[walletPk];
                   return wallet?.name;
                 },
-                initialItems: [
-                  for (TransactionWallet wallet in allPinnedWallets)
-                    wallet.walletPk.toString()
-                ],
+                initialItems: [for (TransactionWallet wallet in allPinnedWallets) wallet.walletPk.toString()],
                 onChangedSingleItem: (walletPk) async {
                   TransactionWallet? wallet = walletsIndexedByPk[walletPk];
                   if (wallet != null) {
-                    List<HomePageWidgetDisplay> currentList =
-                        wallet.homePageWidgetDisplay ?? [];
+                    List<HomePageWidgetDisplay> currentList = wallet.homePageWidgetDisplay ?? [];
                     if (currentList.contains(homePageWidgetDisplay)) {
                       currentList.remove(homePageWidgetDisplay);
                     } else {
                       currentList.add(homePageWidgetDisplay);
                     }
                     await database.createOrUpdateWallet(
-                      wallet.copyWith(
-                          homePageWidgetDisplay: Value(currentList)),
+                      wallet.copyWith(homePageWidgetDisplay: Value(currentList)),
                     );
                   }
                   if (onAnySelected != null) onAnySelected!();
@@ -235,11 +259,8 @@ class EditHomePagePinnedWalletsPopup extends StatelessWidget {
                 },
               ),
             if (homePageWidgetDisplay == HomePageWidgetDisplay.WalletList &&
-                Provider.of<AllWallets>(context).allContainSameCurrency() ==
-                    false &&
-                Provider.of<AllWallets>(context)
-                        .containsMultipleAccountsWithSameCurrency() ==
-                    true)
+                Provider.of<AllWallets>(context).allContainSameCurrency() == false &&
+                Provider.of<AllWallets>(context).containsMultipleAccountsWithSameCurrency() == true)
               HorizontalBreakAbove(
                 enabled: true,
                 child: SettingsContainerSwitch(
@@ -250,11 +271,8 @@ class EditHomePagePinnedWalletsPopup extends StatelessWidget {
                     updateSettings("walletsListCurrencyBreakdown", value,
                         updateGlobalState: false, pagesNeedingRefresh: [1]);
                   },
-                  initialValue:
-                      appStateSettings["walletsListCurrencyBreakdown"],
-                  icon: appStateSettings["outlinedIcons"]
-                      ? Icons.view_list_outlined
-                      : Icons.view_list_rounded,
+                  initialValue: appStateSettings["walletsListCurrencyBreakdown"],
+                  icon: appStateSettings["outlinedIcons"] ? Icons.view_list_outlined : Icons.view_list_rounded,
                 ),
               ),
             // if (showCyclePicker &&
@@ -294,12 +312,9 @@ class EditHomePagePinnedWalletsPopup extends StatelessWidget {
             title: "select-accounts".tr(),
             outsideExtraWidget: IconButton(
               iconSize: 25,
-              padding: EdgeInsetsDirectional.all(
-                  getPlatform() == PlatformOS.isIOS ? 15 : 20),
+              padding: EdgeInsetsDirectional.all(getPlatform() == PlatformOS.isIOS ? 15 : 20),
               icon: Icon(
-                appStateSettings["outlinedIcons"]
-                    ? Icons.edit_outlined
-                    : Icons.edit_rounded,
+                appStateSettings["outlinedIcons"] ? Icons.edit_outlined : Icons.edit_rounded,
               ),
               onPressed: () async {
                 pushRoute(context, EditWalletsPage());
