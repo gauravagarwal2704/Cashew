@@ -19,6 +19,8 @@ import 'package:budget/pages/walletDetailsPage.dart';
 import 'package:budget/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:budget/widgets/countNumber.dart';
+import 'package:budget/globalState.dart';
+import 'package:budget/main.dart';
 
 class WalletEntry extends StatelessWidget {
   const WalletEntry(
@@ -52,12 +54,11 @@ class WalletEntry extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadiusDirectional.circular(6),
                 border: Border.all(
-                  width: 2,
-                  // color: Colors.white70,
+                  width: 1.5,
                   color: selected
                       ? Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white.withOpacity(0.8)
-                          : Colors.black.withOpacity(0.7)
+                          ? Colors.white.withOpacity(0.7)
+                          : Colors.black.withOpacity(0.6)
                       : Colors.transparent,
                 ),
               ),
@@ -95,22 +96,32 @@ class WalletEntry extends StatelessWidget {
               ),
             ),
             onTap: () async {
-              if (selected) {
-                openContainer();
+              if (globalState.isSelectingAccounts) {
+                globalState.addAccountId(walletWithDetails.wallet.walletPk);
+                if (selected) {
+                  globalState.removeAccountId(walletWithDetails.wallet.walletPk);
+                }
+                if (globalState.selectedAccountIds.length == 0) {
+                  globalState.setSelectingAccounts(false);
+                }
               } else {
-                setPrimaryWallet(walletWithDetails.wallet.walletPk,
-                    allWallets:
-                        Provider.of<AllWallets>(context, listen: false));
+                globalState.clearSelectedAccounts();
+                globalState
+                    .addAccountId(walletWithDetails.wallet.walletPk);
+                // setPrimaryWallet(walletWithDetails.wallet.walletPk,
+                //     allWallets:
+                //         Provider.of<AllWallets>(context, listen: false));
+                if (selected) {
+                  openContainer();
+                }
               }
+              appStateKey.currentState?.refreshAppState();
             },
             onLongPress: () {
-              pushRoute(
-                context,
-                AddWalletPage(
-                  wallet: walletWithDetails.wallet,
-                  routesToPopAfterDelete: RoutesToPopAfterDelete.All,
-                ),
-              );
+              globalState.setSelectingAccounts(true);
+              globalState
+                  .addAccountId(walletWithDetails.wallet.walletPk);
+              appStateKey.currentState?.refreshAppState();
             },
           );
         },

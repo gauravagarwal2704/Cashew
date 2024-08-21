@@ -4,6 +4,8 @@ import 'package:budget/pages/transactionFilters.dart';
 import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/transactionEntries.dart';
 import 'package:flutter/material.dart';
+import 'package:budget/globalState.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomeTransactions extends StatelessWidget {
   const HomeTransactions({
@@ -31,12 +33,13 @@ class HomeTransactions extends StatelessWidget {
                       ? true
                       : null
               : null,
+      walletPks: globalState.selectedAccountIds,
     );
     int numberOfFutureDays = appStateSettings["futureTransactionDaysHomePage"];
     return TransactionEntries(
       showNumberOfDaysUntilForFutureDates: true,
       renderType: TransactionEntriesRenderType.implicitlyAnimatedNonSlivers,
-      showNoResults: false,
+      showNoResults: true,
       DateTime.now().justDay(monthOffset: -1),
       DateTime.now().justDay(dayOffset: numberOfFutureDays),
       dateDividerColor: Colors.transparent,
@@ -45,6 +48,8 @@ class HomeTransactions extends StatelessWidget {
       limitPerDay: 50,
       searchFilters: searchFilters,
       enableFutureTransactionsCollapse: false,
+      noResultsMessage: "no-transactions-found".tr(),
+      noResultsPadding: EdgeInsetsDirectional.symmetric(horizontal: 25, vertical: 25),
     );
   }
 }
