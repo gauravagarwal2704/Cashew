@@ -142,7 +142,7 @@ class PieChartWrapper extends StatelessWidget {
                     : 110,
                 decoration: BoxDecoration(
                     color:
-                        middleColor ?? Theme.of(context).colorScheme.surface,
+                        middleColor ?? Theme.of(context).colorScheme.background,
                     shape: BoxShape.circle),
               ),
             ),
@@ -404,7 +404,7 @@ class _Badge extends StatelessWidget {
                             color: color,
                             width: 1.5,
                           ),
-                          color: Theme.of(context).colorScheme.surface,
+                          color: Theme.of(context).colorScheme.background,
                         ),
                         child: Center(
                           child: MediaQuery(
@@ -426,7 +426,7 @@ class _Badge extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.background,
                 ),
                 child: Center(
                   // child: SimpleShadow(

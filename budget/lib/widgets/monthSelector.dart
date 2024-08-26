@@ -131,7 +131,7 @@ class MonthSelectorState extends State<MonthSelector> {
                         DateTime.now().firstDayOfMonth();
                     double spacePadding = measureWidth() / 2 - monthWidth / 2;
                     return Container(
-                      color: Theme.of(context).colorScheme.surface,
+                      color: Theme.of(context).colorScheme.background,
                       padding: EdgeInsetsDirectional.only(
                         start: isFirst &&
                                 getDateFromIndex(index)

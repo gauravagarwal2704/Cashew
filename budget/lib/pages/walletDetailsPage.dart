@@ -1234,7 +1234,7 @@ class WalletDetailsPageState extends State<WalletDetailsPage>
             enableDoubleColumn(context) && widget.wallet == null ? false : true,
         expandedHeight:
             enableDoubleColumn(context) && widget.wallet == null ? 56 : null,
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: Theme.of(context).colorScheme.background,
         scrollController: _scrollController,
         key: pageState,
         listID: listID,
@@ -2586,7 +2586,7 @@ class _AllSpendingPastSpendingGraphState
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                color: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).colorScheme.background,
                 child: FadeOutAndLockFeature(
                   hasInitiallyDismissed: allSpendingHistoryDismissedPremium,
                   actionAfter: () {
@@ -2660,10 +2660,10 @@ class _AllSpendingPastSpendingGraphState
                   foregroundDecoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Theme.of(context).colorScheme.surface,
+                        Theme.of(context).colorScheme.background,
                         Theme.of(context)
                             .colorScheme
-                            .surface
+                            .background
                             .withOpacity(0.0),
                       ],
                       begin: AlignmentDirectional.topCenter,
