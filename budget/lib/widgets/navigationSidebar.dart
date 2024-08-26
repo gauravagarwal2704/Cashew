@@ -105,7 +105,7 @@ class NavigationSidebarState extends State<NavigationSidebar> {
         width: getWidthNavigationSidebar(context),
         child: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.background,
             border: BorderDirectional(
               end: BorderSide(
                 color: appStateSettings["materialYou"]

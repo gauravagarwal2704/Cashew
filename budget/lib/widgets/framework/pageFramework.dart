@@ -1051,7 +1051,7 @@ Color calculateAppBarBGColor({
       : appBarBackgroundColor;
   if (centeredTitleSmall && getPlatform() == PlatformOS.isIOS) {
     appBarBGColorCalculated =
-        appBarBackgroundColor ?? Theme.of(context).colorScheme.surface;
+        appBarBackgroundColor ?? Theme.of(context).colorScheme.background;
   }
   return appBarBGColorCalculated;
 }
@@ -1076,7 +1076,7 @@ List<Widget> getAppBarBackgroundColorLayers({
   );
   return [
     Container(
-      color: appBarBackgroundColor ?? Theme.of(context).colorScheme.surface,
+      color: appBarBackgroundColor ?? Theme.of(context).colorScheme.background,
       // Fixes backdrop not fading correctly when using Impeller (iOS - Flutter v3.13)
       width: MediaQuery.sizeOf(context).width,
       height: MediaQuery.sizeOf(context).height - 1,
@@ -1089,7 +1089,7 @@ List<Widget> getAppBarBackgroundColorLayers({
             height: MediaQuery.sizeOf(context).height - 1,
 
             color: appBarBackgroundColorStart == null
-                ? Theme.of(context).colorScheme.surface
+                ? Theme.of(context).colorScheme.background
                 : appBarBackgroundColorStart,
           ),
     (animationControllerOpacity != null ||

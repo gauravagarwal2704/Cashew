@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:budget/colors.dart';
 import 'package:budget/functions.dart';
 import 'package:budget/pages/addTransactionPage.dart';
-import 'package:budget/pages/premiumPage.dart';
+// import 'package:budget/pages/premiumPage.dart';
 import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/button.dart';
 import 'package:budget/widgets/colorPicker.dart';
@@ -57,8 +57,7 @@ class _SelectColorState extends State<SelectColor> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      selectableColorsList =
-          widget.selectableColorsList ?? selectableColors(context);
+      selectableColorsList = widget.selectableColorsList ?? selectableColors(context);
       if (widget.supportCustomColors) {
         selectableColorsList.add(Colors.transparent);
       }
@@ -125,16 +124,12 @@ class _SelectColorState extends State<SelectColor> {
                           });
                         },
                       )
-                    : widget.supportCustomColors &&
-                            index + 1 == selectableColorsList.length
+                    : widget.supportCustomColors && index + 1 == selectableColorsList.length
                         ? KeepAliveClientMixin(
                             child: ColorIconCustom(
                               previewBuilder: widget.previewBuilder,
-                              initialSelectedColor: selectedColor ??
-                                  Theme.of(context).colorScheme.primary,
-                              outline: selectedIndex == -1 ||
-                                  selectedIndex ==
-                                      selectableColorsList.length - 1,
+                              initialSelectedColor: selectedColor ?? Theme.of(context).colorScheme.primary,
+                              outline: selectedIndex == -1 || selectedIndex == selectableColorsList.length - 1,
                               margin: EdgeInsetsDirectional.all(5),
                               size: 55,
                               onTap: (colorPassed) {
@@ -148,8 +143,7 @@ class _SelectColorState extends State<SelectColor> {
                           )
                         : ColorIcon(
                             margin: EdgeInsetsDirectional.all(5),
-                            color: (widget.supportCustomColors &&
-                                    index + 1 == selectableColorsList.length)
+                            color: (widget.supportCustomColors && index + 1 == selectableColorsList.length)
                                 ? (selectedColor ?? Colors.transparent)
                                 : color,
                             size: 55,
@@ -168,8 +162,7 @@ class _SelectColorState extends State<SelectColor> {
                               }
                             },
                             outline: (selectedIndex != null &&
-                                    selectedIndex ==
-                                        selectableColorsList.length - 1 &&
+                                    selectedIndex == selectableColorsList.length - 1 &&
                                     index == selectedIndex) ||
                                 selectedColor.toString() == color.toString(),
                           ),
@@ -188,13 +181,10 @@ class _SelectColorState extends State<SelectColor> {
                   enableBorderRadius: true,
                   title: "use-system-color".tr(),
                   onSwitched: (value) async {
-                    await updateSettings("accentSystemColor", value,
-                        updateGlobalState: true);
+                    await updateSettings("accentSystemColor", value, updateGlobalState: true);
                     if (value == true) {
                       // Need to set "accentSystemColor" to true before getAccentColorSystemString
-                      await updateSettings(
-                          "accentColor", await getAccentColorSystemString(),
-                          updateGlobalState: true);
+                      await updateSettings("accentColor", await getAccentColorSystemString(), updateGlobalState: true);
                       updateWidgetColorsAndText(context);
                     } else {
                       widget.setSelectedColor!(selectedColor);
@@ -204,17 +194,12 @@ class _SelectColorState extends State<SelectColor> {
                     });
                   },
                   initialValue: useSystemColor,
-                  icon: appStateSettings["outlinedIcons"]
-                      ? Icons.devices_outlined
-                      : Icons.devices_rounded,
+                  icon: appStateSettings["outlinedIcons"] ? Icons.devices_outlined : Icons.devices_rounded,
                 )
               : SizedBox.shrink(),
           AnimatedOpacity(
             duration: Duration(milliseconds: 400),
-            opacity:
-                widget.useSystemColorPrompt == true && useSystemColor == false
-                    ? 1
-                    : 0.5,
+            opacity: widget.useSystemColorPrompt == true && useSystemColor == false ? 1 : 0.5,
             child: Center(
               child: Wrap(
                 alignment: WrapAlignment.center,
@@ -223,13 +208,11 @@ class _SelectColorState extends State<SelectColor> {
                     .map(
                       (index, color) => MapEntry(
                         index,
-                        widget.supportCustomColors &&
-                                index + 1 == selectableColorsList.length
+                        widget.supportCustomColors && index + 1 == selectableColorsList.length
                             ? KeepAliveClientMixin(
                                 child: ColorIconCustom(
                                   previewBuilder: widget.previewBuilder,
-                                  initialSelectedColor: selectedColor ??
-                                      Theme.of(context).colorScheme.primary,
+                                  initialSelectedColor: selectedColor ?? Theme.of(context).colorScheme.primary,
                                   margin: EdgeInsetsDirectional.all(5),
                                   size: 55,
                                   onTap: (colorPassed) {
@@ -238,17 +221,14 @@ class _SelectColorState extends State<SelectColor> {
                                       selectedColor = color;
                                       selectedIndex = index;
                                     });
-                                    Future.delayed(Duration(milliseconds: 70),
-                                        () {
+                                    Future.delayed(Duration(milliseconds: 70), () {
                                       popRoute(context);
                                       if (widget.next != null) {
                                         widget.next!();
                                       }
                                     });
                                   },
-                                  outline: selectedIndex == -1 ||
-                                      selectedIndex ==
-                                          selectableColorsList.length - 1,
+                                  outline: selectedIndex == -1 || selectedIndex == selectableColorsList.length - 1,
                                 ),
                               )
                             : ColorIcon(
@@ -261,8 +241,7 @@ class _SelectColorState extends State<SelectColor> {
                                     setState(() {
                                       selectedColor = color;
                                     });
-                                    Future.delayed(Duration(milliseconds: 70),
-                                        () {
+                                    Future.delayed(Duration(milliseconds: 70), () {
                                       popRoute(context);
                                       if (widget.next != null) {
                                         widget.next!();
@@ -270,8 +249,7 @@ class _SelectColorState extends State<SelectColor> {
                                     });
                                   }
                                 },
-                                outline: selectedColor.toString() ==
-                                    color.toString(),
+                                outline: selectedColor.toString() == color.toString(),
                               ),
                       ),
                     )
@@ -306,15 +284,13 @@ class ColorIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: Duration(milliseconds: 250),
-      margin: margin ??
-          EdgeInsetsDirectional.only(start: 8, end: 8, top: 8, bottom: 8),
+      margin: margin ?? EdgeInsetsDirectional.only(start: 8, end: 8, top: 8, bottom: 8),
       height: size,
       width: size,
       decoration: outline
           ? BoxDecoration(
               border: Border.all(
-                color: dynamicPastel(context, color,
-                    amountLight: 0.5, amountDark: 0.4, inverse: true),
+                color: dynamicPastel(context, color, amountLight: 0.5, amountDark: 0.4, inverse: true),
                 width: 3,
               ),
               borderRadius: BorderRadiusDirectional.all(Radius.circular(500)),
@@ -356,16 +332,14 @@ class ThemeColorIcon extends StatelessWidget {
       message: "theme-color".tr(),
       child: AnimatedContainer(
         duration: Duration(milliseconds: 250),
-        margin: margin ??
-            EdgeInsetsDirectional.only(start: 8, end: 8, top: 8, bottom: 8),
+        margin: margin ?? EdgeInsetsDirectional.only(start: 8, end: 8, top: 8, bottom: 8),
         height: size,
         width: size,
         decoration: outline
             ? BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: dynamicPastel(
-                      context, Theme.of(context).colorScheme.primary,
+                  color: dynamicPastel(context, Theme.of(context).colorScheme.primary,
                       amountLight: 0.5, amountDark: 0.4, inverse: true),
                   width: 3,
                 ),
@@ -486,50 +460,40 @@ class _ColorIconCustomState extends State<ColorIconCustom> {
     );
     return Tooltip(
       message: "custom-color".tr(),
-      child: LockedFeature(
-        actionAfter: () async {
-          await openBottomSheet(context, colorPickerPopup);
-        },
-        child: Container(
-          margin: widget.margin ??
-              EdgeInsetsDirectional.only(start: 8, end: 8, top: 8, bottom: 8),
-          height: widget.size,
-          width: widget.size,
-          decoration: widget.outline
-              ? BoxDecoration(
-                  border: Border.all(
-                    color: dynamicPastel(context, selectedColor,
-                        amountLight: 0.5, amountDark: 0.4, inverse: true),
-                    width: 3,
-                  ),
-                  borderRadius:
-                      BorderRadiusDirectional.all(Radius.circular(500)),
-                )
-              : BoxDecoration(
-                  border: GradientBoxBorder(
-                    gradient: LinearGradient(colors: [
-                      Colors.red.withOpacity(0.8),
-                      Colors.yellow.withOpacity(0.8),
-                      Colors.green.withOpacity(0.8),
-                      Colors.blue.withOpacity(0.8),
-                      Colors.purple.withOpacity(0.8),
-                    ]),
-                    width: 3,
-                  ),
-                  borderRadius: BorderRadiusDirectional.circular(500),
+      child: Container(
+        margin: widget.margin ?? EdgeInsetsDirectional.only(start: 8, end: 8, top: 8, bottom: 8),
+        height: widget.size,
+        width: widget.size,
+        decoration: widget.outline
+            ? BoxDecoration(
+                border: Border.all(
+                  color: dynamicPastel(context, selectedColor, amountLight: 0.5, amountDark: 0.4, inverse: true),
+                  width: 3,
                 ),
-          child: Tappable(
-            color: Colors.transparent,
-            onTap: () async {
-              await openBottomSheet(context, colorPickerPopup);
-            },
-            borderRadius: 500,
-            child: Icon(
-              appStateSettings["outlinedIcons"]
-                  ? Icons.colorize_outlined
-                  : Icons.colorize_rounded,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
+                borderRadius: BorderRadiusDirectional.all(Radius.circular(500)),
+              )
+            : BoxDecoration(
+                border: GradientBoxBorder(
+                  gradient: LinearGradient(colors: [
+                    Colors.red.withOpacity(0.8),
+                    Colors.yellow.withOpacity(0.8),
+                    Colors.green.withOpacity(0.8),
+                    Colors.blue.withOpacity(0.8),
+                    Colors.purple.withOpacity(0.8),
+                  ]),
+                  width: 3,
+                ),
+                borderRadius: BorderRadiusDirectional.circular(500),
+              ),
+        child: Tappable(
+          color: Colors.transparent,
+          onTap: () async {
+            await openBottomSheet(context, colorPickerPopup);
+          },
+          borderRadius: 500,
+          child: Icon(
+            appStateSettings["outlinedIcons"] ? Icons.colorize_outlined : Icons.colorize_rounded,
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ),
       ),
@@ -623,8 +587,7 @@ class _HexColorPickerState extends State<HexColorPicker> {
 
 class ColorCodeFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     // Validate and format the input value
     String formattedText = _formatColorCode(newValue.text);
     if (oldValue.text == "0x" && newValue.text == "0") {
@@ -644,10 +607,7 @@ class ColorCodeFormatter extends TextInputFormatter {
     String cleanedInput = input;
     if (cleanedInput == "0") return "0x";
     // Remove any non-hexadecimal characters
-    cleanedInput = cleanedInput
-        .replaceAll("0x", "")
-        .allCaps
-        .replaceAll(RegExp(r'[^a-fA-F0-9]'), '');
+    cleanedInput = cleanedInput.replaceAll("0x", "").allCaps.replaceAll(RegExp(r'[^a-fA-F0-9]'), '');
     cleanedInput = "0x" + cleanedInput;
 
     if (cleanedInput.length > 8) {
