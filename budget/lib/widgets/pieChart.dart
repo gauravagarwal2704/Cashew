@@ -286,9 +286,9 @@ class PieChartDisplayState extends State<PieChartDisplay> {
                   : 136.0;
       final double widgetScale = isTouched ? 1.3 : 1.0;
       bool isTouchingSameColorSection = false;
-      if (nullIfIndexOutOfRange(widget.data, i - 1)?.category?.colour ==
+      if (nullIfIndexOutOfRange(widget.data, i - 1)?.category.colour ==
               widget.data[i].category.colour ||
-          nullIfIndexOutOfRange(widget.data, i + 1)?.category?.colour ==
+          nullIfIndexOutOfRange(widget.data, i + 1)?.category.colour ==
               widget.data[i].category.colour) {
         isTouchingSameColorSection = true;
       }
@@ -415,7 +415,7 @@ class _Badge extends StatelessWidget {
                               textAlign: TextAlign.center,
                             ),
                             data: MediaQuery.of(context)
-                                .copyWith(textScaleFactor: 1.0),
+                                .copyWith(textScaler: TextScaler.linear(1.0)),
                           ),
                         ),
                       ),

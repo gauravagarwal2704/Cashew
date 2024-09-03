@@ -14,12 +14,13 @@ import 'package:budget/widgets/tappable.dart';
 import 'package:budget/widgets/textWidgets.dart';
 import 'package:budget/widgets/transactionEntry/incomeAmountArrow.dart';
 import 'package:budget/widgets/watchAllWallets.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:budget/pages/walletDetailsPage.dart';
 import 'package:budget/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:budget/widgets/countNumber.dart';
+import 'package:budget/globalState.dart';
+import 'package:budget/main.dart';
 
 class WalletEntry extends StatelessWidget {
   const WalletEntry(
@@ -30,82 +31,62 @@ class WalletEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsetsDirectional.only(start: 6, end: 6),
+      padding: const EdgeInsetsDirectional.only(start: 2, end: 2),
       decoration: BoxDecoration(
         borderRadius: BorderRadiusDirectional.circular(15),
         boxShadow: boxShadowCheck(boxShadowGeneral(context)),
       ),
       child: OpenContainerNavigation(
-        borderRadius: 15,
+        borderRadius: 6,
         openPage: WatchedWalletDetailsPage(
             walletPk: walletWithDetails.wallet.walletPk),
         button: (openContainer) {
           return Tappable(
-            color: getColor(context, "lightDarkAccentHeavyLight"),
-            borderRadius: 14,
+            color: selected
+                ? HexColor(walletWithDetails.wallet.colour,
+                        defaultColor: Theme.of(context).colorScheme.primary)
+                    .withOpacity(0.8)
+                : HexColor(walletWithDetails.wallet.colour,
+                        defaultColor: Theme.of(context).colorScheme.primary)
+                    .withOpacity(0.4),
+            borderRadius: 6,
             child: AnimatedContainer(
               decoration: BoxDecoration(
-                borderRadius: BorderRadiusDirectional.circular(15),
+                borderRadius: BorderRadiusDirectional.circular(6),
                 border: Border.all(
-                  width: 2,
+                  width: 1.5,
                   color: selected
-                      ? HexColor(walletWithDetails.wallet.colour,
-                              defaultColor:
-                                  Theme.of(context).colorScheme.primary)
-                          .withOpacity(0.7)
+                      ? Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white.withOpacity(0.7)
+                          : Colors.black.withOpacity(0.6)
                       : Colors.transparent,
                 ),
               ),
-              duration: Duration(milliseconds: 450),
+              duration: Duration(milliseconds: 50),
               child: Padding(
                 padding: const EdgeInsetsDirectional.symmetric(
-                    horizontal: 18, vertical: 13),
+                    horizontal: 8, vertical: 2),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    PositionedDirectional(
-                      end: -11,
-                      top: -5,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadiusDirectional.circular(100),
-                          color: HexColor(walletWithDetails.wallet.colour,
-                                  defaultColor:
-                                      Theme.of(context).colorScheme.primary)
-                              .withOpacity(0.7),
-                        ),
-                        width: 20,
-                        height: 20,
-                      ),
-                    ),
                     Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsetsDirectional.only(end: 17),
+                            padding: const EdgeInsetsDirectional.only(
+                                end: 0, bottom: 1),
                             child: TextFont(
                               text: walletWithDetails.wallet.name,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           AmountAccount(
                             walletWithDetails: walletWithDetails,
                             textAlign: TextAlign.start,
-                            fontSize: 17,
-                          ),
-                          TextFont(
-                            textAlign: TextAlign.start,
-                            text: walletWithDetails.numberTransactions
-                                    .toString() +
-                                " " +
-                                (walletWithDetails.numberTransactions == 1
-                                    ? "transaction".tr().toLowerCase()
-                                    : "transactions".tr().toLowerCase()),
-                            fontSize: 14,
-                            textColor:
-                                getColor(context, "black").withOpacity(0.65),
+                            fontSize: 15,
                           ),
                         ],
                       ),
@@ -115,22 +96,32 @@ class WalletEntry extends StatelessWidget {
               ),
             ),
             onTap: () async {
-              if (selected) {
-                openContainer();
+              if (globalState.isSelectingAccounts) {
+                globalState.addAccountId(walletWithDetails.wallet.walletPk);
+                if (selected) {
+                  globalState.removeAccountId(walletWithDetails.wallet.walletPk);
+                }
+                if (globalState.selectedAccountIds.length == 0) {
+                  globalState.setSelectingAccounts(false);
+                }
               } else {
-                setPrimaryWallet(walletWithDetails.wallet.walletPk,
-                    allWallets:
-                        Provider.of<AllWallets>(context, listen: false));
+                globalState.clearSelectedAccounts();
+                globalState
+                    .addAccountId(walletWithDetails.wallet.walletPk);
+                // setPrimaryWallet(walletWithDetails.wallet.walletPk,
+                //     allWallets:
+                //         Provider.of<AllWallets>(context, listen: false));
+                if (selected) {
+                  openContainer();
+                }
               }
+              appStateKey.currentState?.refreshAppState();
             },
             onLongPress: () {
-              pushRoute(
-                context,
-                AddWalletPage(
-                  wallet: walletWithDetails.wallet,
-                  routesToPopAfterDelete: RoutesToPopAfterDelete.All,
-                ),
-              );
+              globalState.setSelectingAccounts(true);
+              globalState
+                  .addAccountId(walletWithDetails.wallet.walletPk);
+              appStateKey.currentState?.refreshAppState();
             },
           );
         },
@@ -339,7 +330,7 @@ class AmountAccount extends StatelessWidget {
                 : (walletWithDetails.totalSpent ?? 0) > 0
                     ? getColor(context, "incomeAmount")
                     : getColor(context, "expenseAmount")
-            : getColor(context, "black");
+            : getColor(context, "black").withOpacity(0.7);
     double finalTotal =
         appStateSettings["accountColorfulAmountsWithArrows"] == true
             ? (walletWithDetails.totalSpent ?? 0).abs()
@@ -376,7 +367,7 @@ class AmountAccount extends StatelessWidget {
                 finalNumber: finalTotal,
                 currencyKey: walletWithDetails.wallet.currency,
                 decimals: walletWithDetails.wallet.decimals,
-                addCurrencyName: true,
+                addCurrencyName: false,
               ),
               textColor: textColor,
               fontSize: fontSize,

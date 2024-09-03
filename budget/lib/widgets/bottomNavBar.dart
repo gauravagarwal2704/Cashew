@@ -1,4 +1,3 @@
-import 'package:budget/database/tables.dart';
 import 'package:budget/functions.dart';
 import 'package:budget/pages/editBudgetPage.dart';
 import 'package:budget/pages/editHomePage.dart';
@@ -10,11 +9,8 @@ import 'package:budget/struct/navBarIconsData.dart';
 import 'package:budget/struct/settings.dart';
 import 'package:budget/widgets/fadeIn.dart';
 import 'package:budget/widgets/framework/popupFramework.dart';
-import 'package:budget/widgets/iconButtonScaled.dart';
-import 'package:budget/widgets/moreIcons.dart';
 import 'package:budget/widgets/navigationFramework.dart';
 import 'package:budget/widgets/openBottomSheet.dart';
-import 'package:budget/widgets/framework/pageFramework.dart';
 import 'package:budget/widgets/outlinedButtonStacked.dart';
 import 'package:budget/widgets/framework/navigation_bar/navigation_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -216,8 +212,8 @@ class BottomNavBarState extends State<BottomNavBar> {
               ? dynamicPastel(context, Theme.of(context).colorScheme.primary,
                   amount: 0.6)
               : null,
-          labelTextStyle: MaterialStateProperty.resolveWith((states) {
-            if (states.contains(MaterialState.selected)) {
+          labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
               return TextStyle(
                 fontFamily: appStateSettings["font"],
                 fontFamilyFallback: ['Inter'],

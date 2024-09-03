@@ -27,7 +27,7 @@ Future<Map<String, dynamic>> getDefaultPreferences() async {
     "appAnimations": AppAnimations.all.index,
     "showFAQAndHelpLink": true,
     "showExtraInfoText": true,
-    "selectedWalletPk": "0",
+    "selectedWalletPk": "",
     "selectedSubscriptionType": 0,
     "accentColor": toHexString(Color(0xFF1B447A)),
     "accentSystemColor": await systemColorByDefault(),
