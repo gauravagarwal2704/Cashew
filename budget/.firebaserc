@@ -1,5 +1,14 @@
 {
   "projects": {
-    "default": "budget-app-flutter"
+    "default": "cashew-app-49549"
+  },
+  "targets": {
+    "cashew-app-49549": {
+      "hosting": {
+        "mycashew": [
+          "mycashew"
+        ]
+      }
+    }
   }
 }

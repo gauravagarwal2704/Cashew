@@ -9,6 +9,7 @@
       "request": "launch",
       "type": "dart",
       "args": ["--web-port", "5000"],
+      "program": "./budget/lib/main.dart",
       // "flutterMode": "profile",
     },
     // {

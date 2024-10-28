@@ -2,7 +2,7 @@
   "hosting": {
     "public": "build/web",
     "predeploy": "flutter build web --release --web-renderer canvaskit --no-tree-shake-icons",
-    "site":"budget-track",
+    "site":"mycashew",
     "ignore": [
       "firebase.json",
       "**/.*",
