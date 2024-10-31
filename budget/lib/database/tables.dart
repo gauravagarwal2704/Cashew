@@ -5891,12 +5891,26 @@ class FinanceDatabase extends _$FinanceDatabase {
     Expression<bool> isMethodAdded =
         onlyShowBasedOnMethodAdded(tbl, searchFilters.methodAdded);
 
-    Expression<bool> isInAmountRange = searchFilters.amountRange != null
-        ? tbl.amount
-                .isBiggerOrEqualValue(searchFilters.amountRange?.start ?? 0) &
-            tbl.amount
-                .isSmallerOrEqualValue(searchFilters.amountRange?.end ?? 0)
-        : Constant(true);
+    Expression<bool> isInAmountRange = Constant(true);
+    
+    if (searchFilters.amountRange != null) {
+      Expression<bool> amountInRange = tbl.amount.abs().isBetweenValues(
+        searchFilters.amountRange!.start,
+        searchFilters.amountRange!.end
+      );
+      
+      Expression<bool> expenseCondition = searchFilters.expenseIncome.isEmpty ||
+              searchFilters.expenseIncome.contains(ExpenseIncome.expense)
+          ? (amountInRange & tbl.income.equals(false))
+          : Constant(false);
+          
+      Expression<bool> incomeCondition = searchFilters.expenseIncome.isEmpty ||
+              searchFilters.expenseIncome.contains(ExpenseIncome.income)
+          ? (amountInRange & tbl.income.equals(true))
+          : Constant(false);
+          
+      isInAmountRange = expenseCondition | incomeCondition;
+    }
 
     Expression<bool> isInDateTimeRange = onlyShowBasedOnTimeRange(
         tbl,

@@ -37,7 +37,6 @@ class SearchFilters {
     this.paidStatus = const [],
     this.transactionTypes = const [],
     this.budgetTransactionFilters = const [],
-    // this.reoccurence,
     this.methodAdded = const [],
     this.amountRange,
     this.dateTimeRange,
@@ -45,29 +44,20 @@ class SearchFilters {
     this.titleContains,
     this.noteContains,
   }) {
-    walletPks = this.walletPks.isEmpty ? [] : this.walletPks;
-    categoryPks = this.categoryPks.isEmpty ? [] : this.categoryPks;
-    subcategoryPks =
-        this.subcategoryPks?.isEmpty == true ? [] : this.subcategoryPks;
-    budgetPks = this.budgetPks.isEmpty ? [] : this.budgetPks;
-    excludedBudgetPks =
-        this.excludedBudgetPks.isEmpty ? [] : this.excludedBudgetPks;
-    objectivePks = this.objectivePks.isEmpty ? [] : this.objectivePks;
-    objectiveLoanPks =
-        this.objectiveLoanPks.isEmpty ? [] : this.objectiveLoanPks;
-    expenseIncome = this.expenseIncome.isEmpty ? [] : this.expenseIncome;
-    positiveCashFlow = this.positiveCashFlow;
-    paidStatus = this.paidStatus.isEmpty ? [] : this.paidStatus;
-    transactionTypes =
-        this.transactionTypes.isEmpty ? [] : this.transactionTypes;
-    budgetTransactionFilters = this.budgetTransactionFilters.isEmpty
-        ? []
-        : this.budgetTransactionFilters;
-    // reoccurence = [];
-    methodAdded = this.methodAdded.isEmpty ? [] : this.methodAdded;
+    walletPks = walletPks.isEmpty ? [] : walletPks;
+    categoryPks = categoryPks.isEmpty ? [] : categoryPks;
+    subcategoryPks = subcategoryPks?.isEmpty == true ? [] : subcategoryPks;
+    budgetPks = budgetPks.isEmpty ? [] : budgetPks;
+    excludedBudgetPks = excludedBudgetPks.isEmpty ? [] : excludedBudgetPks;
+    objectivePks = objectivePks.isEmpty ? [] : objectivePks;
+    objectiveLoanPks = objectiveLoanPks.isEmpty ? [] : objectiveLoanPks;
+    expenseIncome = expenseIncome.isEmpty ? [] : expenseIncome;
+    paidStatus = paidStatus.isEmpty ? [] : paidStatus;
+    transactionTypes = transactionTypes.isEmpty ? [] : transactionTypes;
+    budgetTransactionFilters = budgetTransactionFilters.isEmpty ? [] : budgetTransactionFilters;
+    methodAdded = methodAdded.isEmpty ? [] : methodAdded;
   }
-  //if the value is empty, it means all/ignore
-  // think of it, if the tag is added it will be considered in the search
+
   List<String> walletPks;
   List<String> categoryPks;
   List<String>?
@@ -81,7 +71,6 @@ class SearchFilters {
   List<PaidStatus> paidStatus;
   List<TransactionSpecialType?> transactionTypes;
   List<BudgetTransactionFilters> budgetTransactionFilters;
-  // List<BudgetReoccurence> reoccurence;
   List<MethodAdded?> methodAdded;
   RangeValues? amountRange;
   DateTimeRange? dateTimeRange;
@@ -135,7 +124,7 @@ class SearchFilters {
     );
   }
 
-  clearSearchFilters() {
+  void clearSearchFilters() {
     walletPks = [];
     categoryPks = [];
     subcategoryPks = [];
@@ -148,7 +137,6 @@ class SearchFilters {
     paidStatus = [];
     transactionTypes = [];
     budgetTransactionFilters = [];
-    // reoccurence = [];
     methodAdded = [];
     amountRange = null;
     dateTimeRange = null;
@@ -158,7 +146,7 @@ class SearchFilters {
   }
 
   bool isClear({bool? ignoreDateTimeRange, bool? ignoreSearchQuery}) {
-    if (walletPks.isEmpty &&
+    bool result = walletPks.isEmpty &&
         categoryPks.isEmpty &&
         subcategoryPks?.isEmpty == true &&
         budgetPks.isEmpty &&
@@ -170,16 +158,14 @@ class SearchFilters {
         paidStatus.isEmpty &&
         transactionTypes.isEmpty &&
         budgetTransactionFilters.isEmpty &&
-        // reoccurence == [] &&
         methodAdded.isEmpty &&
         amountRange == null &&
         (ignoreDateTimeRange == true || dateTimeRange == null) &&
         (ignoreSearchQuery == true || searchQuery == null) &&
         titleContains == null &&
-        noteContains == null)
-      return true;
-    else
-      return false;
+        noteContains == null;
+
+    return result;
   }
 
   void loadFilterString(String? filterString,
@@ -189,7 +175,6 @@ class SearchFilters {
     clearSearchFilters();
 
     for (int i = 0; i < filterElements.length; i += 2) {
-      if (i >= filterElements.length - 1) break;
       String? key = nullIfIndexOutOfRange(filterElements, i);
       String? value = nullIfIndexOutOfRange(filterElements, i + 1);
       if (key == null || value == null) break;
@@ -232,8 +217,13 @@ class SearchFilters {
               objectiveLoanPks.add(value);
             }
             break;
-          case 'expenseIncome':
-            expenseIncome.add(ExpenseIncome.values[int.parse(value)]);
+            case 'expenseIncome':
+            if (value != "null") {
+              int? index = int.tryParse(value);
+              if (index != null && index >= 0 && index < ExpenseIncome.values.length) {
+                expenseIncome.add(ExpenseIncome.values[index]);
+              }
+            }
             break;
           case 'positiveCashFlow':
             if (value == "null") {
@@ -260,17 +250,25 @@ class SearchFilters {
           case 'methodAdded':
             methodAdded.add(MethodAdded.values[int.parse(value)]);
             break;
-          case 'amountRange':
+            case 'amountRange':
             if (value == "null") {
               amountRange = null;
             } else {
-              value = value.replaceAll("RangeValues(", "");
-              value = value.replaceAll(")", "");
-              List<String> rangeValues = value.split(", ");
-              amountRange = RangeValues(
-                double.parse(rangeValues[0]),
-                double.parse(rangeValues[1]),
-              );
+              String cleanValue = value
+                  .replaceAll("RangeValues(", "")
+                  .replaceAll(")", "")
+                  .replaceAll(" ", "");
+              List<String> rangeValues = cleanValue.split(",");
+              if (rangeValues.length == 2) {
+                try {
+                  double end = double.parse(rangeValues[1]);
+                  
+                  // Create range that works for both positive and negative values
+                  amountRange = RangeValues(-end, end);
+                } catch (e) {
+                  amountRange = null;
+                }
+              }
             }
             break;
           case 'dateTimeRange':
@@ -310,15 +308,13 @@ class SearchFilters {
         }
       } catch (e) {
         print(
-          e.toString() +
-              " error loading filter string " +
-              key.toString() +
-              " " +
-              value.toString(),
+          "Error loading filter string for $key: $e",
         );
       }
     }
   }
+
+  
 
   String getFilterString() {
     String outString = "";
@@ -333,6 +329,13 @@ class SearchFilters {
     }
     if (subcategoryPks == null) {
       outString += "subcategoryPks:-:" + "null" + ":-:";
+    }
+    if (amountRange != null) {
+      // Store the absolute range value
+      double absValue = amountRange!.end.abs();
+      outString += "amountRange:-:RangeValues($absValue, $absValue):-:";
+    } else {
+      outString += "amountRange:-:null:-:";
     }
     for (String? element in budgetPks) {
       outString += "budgetPks:-:" + element.toString() + ":-:";
